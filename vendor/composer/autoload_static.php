@@ -30,6 +30,10 @@ class ComposerStaticInitda638bc4d0437e1c0a6960f42ef37976
         array (
             'Complex\\' => 8,
         ),
+        'A' => 
+        array (
+            'Automattic\\WooCommerce\\' => 23,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -61,6 +65,10 @@ class ComposerStaticInitda638bc4d0437e1c0a6960f42ef37976
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
+        ),
+        'Automattic\\WooCommerce\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/automattic/woocommerce/src/WooCommerce',
         ),
     );
 
