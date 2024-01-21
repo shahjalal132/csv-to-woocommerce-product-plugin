@@ -39,3 +39,4 @@ register_deactivation_hook( __FILE__, 'sync_products_table_deletion' );
 require_once JALAL_PLUGIN_PATH . '/inc/db_table_creation.php';
 require_once JALAL_PLUGIN_PATH . '/inc/insert_data_to_db.php';
 require_once JALAL_PLUGIN_PATH . '/inc/insert_product_to_woo.php';
+require_once JALAL_PLUGIN_PATH . '/inc/custom_functions.php';
