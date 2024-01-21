@@ -84,7 +84,7 @@ function csv_to_product_page_callback() {
                         // Insert to database
                         global $wpdb;
                         $table_name = $wpdb->prefix . 'sync_products';
-                        $wpdb->query( "TRUNCATE TABLE $table_name" );
+                        // $wpdb->query( "TRUNCATE TABLE $table_name" );
 
                         // Prepare data for insertion
                         $data = array(
