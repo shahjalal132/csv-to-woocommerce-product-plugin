@@ -54,11 +54,70 @@ function csv_to_product_page_callback() {
 
                 $product_data = json_decode( $json, true );
 
-                // echo '<pre>';
-                // print_r( $product_data );
-                // echo '</pre>';
+                // Insert data to database
+                if ( !empty( $product_data ) && is_array( $product_data ) ) {
 
-                echo htmlspecialchars( $json );
+                    foreach ( $product_data as $single_data ) {
+
+                        // Extract product data to variables
+                        $product_id   = $single_data[0];
+                        $title        = $single_data[8];
+                        $sku          = $single_data[1];
+                        $variant_code = $single_data[2];
+                        $color        = $single_data[3];
+                        $desc_prod    = $single_data[4];
+                        $category     = $single_data[5];
+                        $desc_fam_en  = $single_data[6];
+                        $desc_mod_id  = $single_data[7];
+                        $img_1        = $single_data[9];
+                        $img_2        = $single_data[10];
+                        $img_3        = $single_data[11];
+                        $season       = $single_data[12];
+                        $promo        = $single_data[13];
+                        $price        = $single_data[14];
+                        $price_promo  = $single_data[15];
+                        $size         = $single_data[16];
+                        $quantity     = $single_data[17];
+                        $mag          = $single_data[18];
+                        $warehouse    = $single_data[19];
+
+                        // Insert to database
+                        global $wpdb;
+                        $table_name = $wpdb->prefix . 'sync_products';
+                        $wpdb->query( "TRUNCATE TABLE $table_name" );
+
+                        // Prepare data for insertion
+                        $data = array(
+                            'product_id'   => $product_id,
+                            'title'        => $title,
+                            'sku'          => $sku,
+                            'variant_code' => $variant_code,
+                            'color'        => $color,
+                            'desc_prod'    => $desc_prod,
+                            'category'     => $category,
+                            'desc_fam_en'  => $desc_fam_en,
+                            'desc_mod_id'  => $desc_mod_id,
+                            'img_1'        => $img_1,
+                            'img_2'        => $img_2,
+                            'img_3'        => $img_3,
+                            'season'       => $season,
+                            'promo'        => $promo,
+                            'price'        => $price,
+                            'price_promo'  => $price_promo,
+                            'size'         => $size,
+                            'quantity'     => $quantity,
+                            'mag'          => $mag,
+                            'warehouse'    => $warehouse,
+                            'status'       => 'pending',
+                        );
+
+                        // Insert data into the database
+                        $wpdb->insert( $table_name, $data );
+
+                    }
+                }
+
+                // echo htmlspecialchars( $json );
 
             } else {
                 // if file not uploaded
