@@ -69,7 +69,7 @@ function display_custom_tab_content() {
     $promo       = get_post_meta( $product->get_id(), '_promo', true );
 
     // Output the content in a table
-    echo '<h4>Custom Information</h4>';
+    echo '<h4>More Information</h4>';
     echo '<table>';
     echo '<tr><td>Color:</td><td>' . esc_html( $color ) . '</td></tr>';
     echo '<tr><td>Size:</td><td>' . esc_html( $size ) . '</td></tr>';
