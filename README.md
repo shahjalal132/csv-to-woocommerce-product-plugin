@@ -1,0 +1,1 @@
+## WooCommerce Plugin for insert products from csv file
