@@ -98,7 +98,7 @@ function product_insert_woocommerce() {
                 'name'        => $title,
                 'sku'         => $sku,
                 'type'        => 'simple',
-                'description' => $desc_prod,
+                'description' => '',
                 'attributes'  => [
                     [
                         'name'      => 'Dimensions',
@@ -118,7 +118,7 @@ function product_insert_woocommerce() {
                 'name'        => $title,
                 'sku'         => $sku,
                 'type'        => 'simple',
-                'description' => $desc_prod,
+                'description' => '',
                 'attributes'  => [
                     [
                         'name'      => 'Dimensions',
