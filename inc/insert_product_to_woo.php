@@ -184,6 +184,25 @@ function product_insert_woocommerce() {
             update_post_meta( $product_id, '_visibility', 'visible' );
             update_post_meta( $product_id, '_stock_status', 'instock' );
 
+            // set products additional information
+            update_post_meta( $product_id, '_color', $color );
+            update_post_meta( $product_id, '_season', $season );
+            update_post_meta( $product_id, '_size', $size );
+            update_post_meta( $product_id, '_mag', $mag );
+            update_post_meta( $product_id, '_desc_mod_id', $desc_mod_id );
+            update_post_meta( $product_id, '_promo', $promo );
+
+            // Update product meta data in WordPress
+            update_post_meta( $product_id, '_stock', $quantity );
+
+            // display out of stock message if stock is 0
+            if ( $quantity <= 0 ) {
+                update_post_meta( $product_id, '_stock_status', 'outofstock' );
+            } else {
+                update_post_meta( $product_id, '_stock_status', 'instock' );
+            }
+            update_post_meta( $product_id, '_manage_stock', 'yes' );
+
             // Add variations
             foreach ( explode( '|', $color ) as $color_option ) {
                 foreach ( explode( '|', $size ) as $size_option ) {
@@ -252,23 +271,7 @@ function product_insert_woocommerce() {
                         set_post_thumbnail( $product_id, $attach_id );
                         $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
                     }
-
-
-                    // If specific image condition is not met, set a random image as thumbnail
-                    if ( !$specific_image_attached ) {
-
-                        $gallery_ids = get_post_meta( $product_id, '_product_image_gallery', true );
-                        $gallery_ids = explode( ',', $gallery_ids );
-
-                        // Check if there are images in the gallery
-                        if ( !empty( $gallery_ids ) ) {
-                            // Select a random image from the gallery
-                            $random_attach_id = $gallery_ids[array_rand( $gallery_ids )];
-
-                            // Set the randomly selected image as the product thumbnail
-                            set_post_thumbnail( $product_id, $random_attach_id );
-                        }
-                    }
+                    
                 }
             }
 
