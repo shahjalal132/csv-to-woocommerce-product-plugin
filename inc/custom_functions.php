@@ -1,6 +1,6 @@
 <?php
 
-// Display additional information in single product page
+/* // Display additional information in single product page
 function display_custom_information_in_additional_tab( $product_attributes ) {
 
     global $product;
@@ -43,10 +43,10 @@ function display_custom_information_in_additional_tab( $product_attributes ) {
     return $product_attributes;
 }
 
-add_filter( 'woocommerce_display_product_attributes', 'display_custom_information_in_additional_tab' );
+add_filter( 'woocommerce_display_product_attributes', 'display_custom_information_in_additional_tab' ); */
 
 
-// create a custom tab for products
+/* // create a custom tab for products
 function add_custom_tab( $tabs ) {
 
     $tabs['product-infos'] = array(
@@ -78,26 +78,5 @@ function display_custom_tab_content() {
     echo '</table>';
 }
 
-add_filter( 'woocommerce_product_tabs', 'add_custom_tab' );
-
-
-// modify product tile
-function remove_product_code_from_title($title, $id = 0) {
-    // Check if we are on a single product page
-    if (is_product()) {
-        // Get the product object
-        $product = wc_get_product($id);
-
-        // Check if the product object exists and has a SKU (product code)
-        if ($product && $product->get_sku()) {
-            // Remove the product code from the title
-            $title = str_replace($product->get_sku(), '', $title);
-        }
-    }
-
-    return $title;
-}
-
-// Hook the function to the 'woocommerce_product_title' filter
-add_filter('woocommerce_product_title', 'remove_product_code_from_title', 10, 2);
+add_filter( 'woocommerce_product_tabs', 'add_custom_tab' ); */
 

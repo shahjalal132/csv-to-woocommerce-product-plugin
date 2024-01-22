@@ -13,13 +13,13 @@ function product_insert_woocommerce() {
     // Define table names
     $table_name = $wpdb->prefix . 'sync_products';
 
-    // Retrieve pending products from the database
-    $products = $wpdb->get_results( "SELECT * FROM $table_name WHERE status = 'pending' LIMIT 1" );
-
     // WooCommerce store information
     $website_url     = home_url();
     $consumer_key    = 'ck_1d3c3981897b00cd3904f6a805bbe023f5b03dd4';
     $consumer_secret = 'cs_2ee2e885bcecb478f822fc4222fdbc837ed9121d';
+
+    // Retrieve pending products from the database
+    $products = $wpdb->get_results( "SELECT * FROM $table_name WHERE status = 'pending' LIMIT 1" );
 
     foreach ( $products as $product ) {
 
@@ -28,7 +28,7 @@ function product_insert_woocommerce() {
         $sku       = isset( $product->product_id ) ? $product->product_id : '';
         $p_num     = isset( $product->sku ) ? $product->sku : '';
 
-        // modified product title
+        // Modified product title
         $title = isset( $product->title ) ? $product->title : '';
         $title = str_replace( $p_num, '', $title );
 
@@ -52,12 +52,11 @@ function product_insert_woocommerce() {
         $img_2 = isset( $product->img_2 ) ? $product->img_2 : '';
         $img_3 = isset( $product->img_3 ) ? $product->img_3 : '';
 
-        // concatenate images with coma
+        // Concatenate images with a comma
         $images = $img_1 . ',' . $img_2 . ',' . $img_3;
 
-        // convert images to array
+        // Convert images to an array
         $images_arr = explode( ',', $images );
-
 
         // Set up the API client with WooCommerce store URL and credentials
         $client = new Client(
@@ -82,12 +81,12 @@ function product_insert_woocommerce() {
         );
 
         // Check if the product already exists
-        $exiting_products = new WP_Query( $args );
+        $existing_products = new WP_Query( $args );
 
-        if ( $exiting_products->have_posts() ) {
-            $exiting_products->the_post();
+        if ( $existing_products->have_posts() ) {
+            $existing_products->the_post();
 
-            // get product id
+            // Get product id
             $product_id = get_the_ID();
 
             // Update the status of the processed product in your database
@@ -97,37 +96,81 @@ function product_insert_woocommerce() {
                 [ 'id' => $serial_id ]
             );
 
-            // Update the product  if already exists
+            // Update the variable product if it already exists
             $product_data = [
                 'name'        => $title,
                 'sku'         => $sku,
-                'type'        => 'simple',
+                'type'        => 'variable',
                 'description' => '',
                 'attributes'  => [
                     [
-                        'name'      => 'Dimensions',
-                        'visible'   => true,
-                        'variation' => true,
+                        'name'        => 'Color',
+                        'options'     => explode( separator: '|', string: $color ),
+                        'position'    => 0,
+                        'visible'     => true,
+                        'variation'   => true,
+                        'is_taxonomy' => false,
+                    ],
+                    [
+                        'name'        => 'Size',
+                        'options'     => explode( separator: '|', string: $size ),
+                        'position'    => 1,
+                        'visible'     => true,
+                        'variation'   => true,
+                        'is_taxonomy' => false,
                     ],
                 ],
             ];
 
-            // update product
+            // Update product
             $client->put( 'products/' . $product_id, $product_data );
 
-        } else {
+            // Add variations
+            foreach ( explode( '|', $color ) as $color_option ) {
+                foreach ( explode( '|', $size ) as $size_option ) {
+                    $variation_data = [
+                        'attributes'     => [
+                            [
+                                'name'  => 'Color',
+                                'value' => $color_option,
+                            ],
+                            [
+                                'name'  => 'Size',
+                                'value' => $size_option,
+                            ],
+                        ],
+                        'regular_price'  => $price,
+                        'stock_quantity' => $quantity,
+                    ];
 
-            // Create a new product if not exists
+                    // Add variation
+                    $client->post( 'products/' . $product_id . '/variations', $variation_data );
+                }
+            }
+
+        } else {
+            // Create a new variable product if it does not exist
             $product_data = [
                 'name'        => $title,
                 'sku'         => $sku,
-                'type'        => 'simple',
+                'type'        => 'variable',
                 'description' => '',
                 'attributes'  => [
                     [
-                        'name'      => 'Dimensions',
-                        'visible'   => true,
-                        'variation' => true,
+                        'name'        => 'Color',
+                        'options'     => explode( '|', $color ),
+                        'position'    => 0,
+                        'visible'     => true,
+                        'variation'   => true,
+                        'is_taxonomy' => false,
+                    ],
+                    [
+                        'name'        => 'Size',
+                        'options'     => explode( '|', $size ),
+                        'position'    => 1,
+                        'visible'     => true,
+                        'variation'   => true,
+                        'is_taxonomy' => false,
                     ],
                 ],
             ];
@@ -137,38 +180,38 @@ function product_insert_woocommerce() {
             $product_id = $product->id;
 
             // Set product information
-            wp_set_object_terms( $product_id, 'simple', 'product_type' );
+            wp_set_object_terms( $product_id, 'variable', 'product_type' );
             update_post_meta( $product_id, '_visibility', 'visible' );
             update_post_meta( $product_id, '_stock_status', 'instock' );
-            update_post_meta( $product_id, '_sale_price', $price );
-            update_post_meta( $product_id, '_price', $price );
 
-            // set products additional information
-            update_post_meta( $product_id, '_color', $color );
-            update_post_meta( $product_id, '_season', $season );
-            update_post_meta( $product_id, '_size', $size );
-            update_post_meta( $product_id, '_mag', $mag );
-            update_post_meta( $product_id, '_desc_mod_id', $desc_mod_id );
-            update_post_meta( $product_id, '_promo', $promo );
+            // Add variations
+            foreach ( explode( '|', $color ) as $color_option ) {
+                foreach ( explode( '|', $size ) as $size_option ) {
+                    $variation_data = [
+                        'attributes'     => [
+                            [
+                                'name'  => 'Color',
+                                'value' => $color_option,
+                            ],
+                            [
+                                'name'  => 'Size',
+                                'value' => $size_option,
+                            ],
+                        ],
+                        'regular_price'  => $price,
+                        'stock_quantity' => $quantity,
+                    ];
 
-            // Update product meta data in WordPress
-            update_post_meta( $product_id, '_stock', $quantity );
-
-            // display out of stock message if stock is 0
-            if ( $quantity <= 0 ) {
-                update_post_meta( $product_id, '_stock_status', 'outofstock' );
-            } else {
-                update_post_meta( $product_id, '_stock_status', 'instock' );
+                    // Add variation
+                    $client->post( 'products/' . $product_id . '/variations', $variation_data );
+                }
             }
-            update_post_meta( $product_id, '_manage_stock', 'yes' );
 
-            // set product categories
+            // Set product categories
             wp_set_object_terms( $product_id, $category, 'product_cat' );
 
-
-            // set product gallery images
+            // Set product gallery images
             foreach ( $images_arr as $image_url ) {
-
                 // Extract image name
                 $image_name = basename( $image_url );
                 // Get WordPress upload directory
@@ -227,16 +270,14 @@ function product_insert_woocommerce() {
                         }
                     }
                 }
-
-                // Update the status of the processed product in your database
-                $wpdb->update(
-                    $table_name,
-                    [ 'status' => 'completed' ],
-                    [ 'id' => $serial_id ]
-                );
-
-
             }
+
+            // Update the status of the processed product in your database
+            $wpdb->update(
+                $table_name,
+                [ 'status' => 'completed' ],
+                [ 'id' => $serial_id ]
+            );
 
             return "Product Inserted Successfully";
         }
