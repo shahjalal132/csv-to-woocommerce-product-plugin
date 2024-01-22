@@ -18,16 +18,16 @@ function product_insert_woocommerce() {
 
     // WooCommerce store information
     $website_url     = home_url();
-    $consumer_key    = 'ck_2406c908426f7209d23ca57d7ab41f27ea7f7987';
-    $consumer_secret = 'cs_720e07911ac5eeafa533ea24f29a3d2a4ac5442d';
+    $consumer_key    = 'ck_1d3c3981897b00cd3904f6a805bbe023f5b03dd4';
+    $consumer_secret = 'cs_2ee2e885bcecb478f822fc4222fdbc837ed9121d';
 
     foreach ( $products as $product ) {
 
         // Retrieve product data
         $serial_id    = isset( $product->id ) ? $product->id : '';
-        $p_id         = isset( $product->product_id ) ? $product->product_id : '';
+        $sku          = isset( $product->product_id ) ? $product->product_id : '';
         $title        = isset( $product->title ) ? $product->title : '';
-        $sku          = isset( $product->sku ) ? $product->sku : '';
+        $p_num        = isset( $product->sku ) ? $product->sku : '';
         $variant_code = isset( $product->variant_code ) ? $product->variant_code : '';
         $color        = isset( $product->color ) ? $product->color : '';
         $desc_prod    = isset( $product->desc_prod ) ? $product->desc_prod : '';
@@ -173,6 +173,9 @@ function product_insert_woocommerce() {
                 // Download the image from URL and save it to the upload directory
                 $image_data = file_get_contents( $image_url );
 
+                // Set specific image as product thumbnail
+                $specific_image_attached = false; // Flag to track the attachment of the specific image
+
                 if ( $image_data !== false ) {
                     $image_file = $upload_dir['path'] . '/' . $image_name;
                     file_put_contents( $image_file, $image_data );
@@ -197,7 +200,28 @@ function product_insert_woocommerce() {
                     $gallery_ids[] = $attach_id;
                     update_post_meta( $product_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
 
-                    set_post_thumbnail( $product_id, $attach_id );
+                    // Check if this image should be set as the product thumbnail
+                    if ( strpos( $image_url, 'CAPPOTTI-1' ) !== false ) {
+                        set_post_thumbnail( $product_id, $attach_id );
+                        $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
+                    }
+
+
+                    // If specific image condition is not met, set a random image as thumbnail
+                    if ( !$specific_image_attached ) {
+                        
+                        $gallery_ids = get_post_meta( $product_id, '_product_image_gallery', true );
+                        $gallery_ids = explode( ',', $gallery_ids );
+
+                        // Check if there are images in the gallery
+                        if ( !empty( $gallery_ids ) ) {
+                            // Select a random image from the gallery
+                            $random_attach_id = $gallery_ids[array_rand( $gallery_ids )];
+
+                            // Set the randomly selected image as the product thumbnail
+                            set_post_thumbnail( $product_id, $random_attach_id );
+                        }
+                    }
                 }
 
                 // Update the status of the processed product in your database

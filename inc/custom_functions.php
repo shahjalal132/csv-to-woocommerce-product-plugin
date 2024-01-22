@@ -50,7 +50,7 @@ add_filter( 'woocommerce_display_product_attributes', 'display_custom_informatio
 function add_custom_tab( $tabs ) {
 
     $tabs['product-infos'] = array(
-        'title'    => __( 'Additional Informations' ),
+        'title'    => __( 'Additional information\'s' ),
         'priority' => 50,
         'callback' => 'display_custom_tab_content',
     );
@@ -71,10 +71,10 @@ function display_custom_tab_content() {
     // Output the content in a table
     echo '<h4>More Information</h4>';
     echo '<table>';
-    echo '<tr><td>Color:</td><td>' . esc_html( $color ) . '</td></tr>';
-    echo '<tr><td>Size:</td><td>' . esc_html( $size ) . '</td></tr>';
-    echo '<tr><td>Type:</td><td>' . esc_html( $desc_mod_id ) . '</td></tr>';
-    echo '<tr><td>Promo:</td><td>' . esc_html( $promo ) . '</td></tr>';
+    echo '<tr><td>Color</td><td>' . esc_html( $color ) . '</td></tr>';
+    echo '<tr><td>Size</td><td>' . esc_html( $size ) . '</td></tr>';
+    echo '<tr><td>Type</td><td>' . esc_html( $desc_mod_id ) . '</td></tr>';
+    echo '<tr><td>Promo</td><td>' . esc_html( $promo ) . '</td></tr>';
     echo '</table>';
 }
 
