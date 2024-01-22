@@ -24,10 +24,14 @@ function product_insert_woocommerce() {
     foreach ( $products as $product ) {
 
         // Retrieve product data
-        $serial_id    = isset( $product->id ) ? $product->id : '';
-        $sku          = isset( $product->product_id ) ? $product->product_id : '';
-        $title        = isset( $product->title ) ? $product->title : '';
-        $p_num        = isset( $product->sku ) ? $product->sku : '';
+        $serial_id = isset( $product->id ) ? $product->id : '';
+        $sku       = isset( $product->product_id ) ? $product->product_id : '';
+        $p_num     = isset( $product->sku ) ? $product->sku : '';
+
+        // modified product title
+        $title = isset( $product->title ) ? $product->title : '';
+        $title = str_replace( $p_num, '', $title );
+
         $variant_code = isset( $product->variant_code ) ? $product->variant_code : '';
         $color        = isset( $product->color ) ? $product->color : '';
         $desc_prod    = isset( $product->desc_prod ) ? $product->desc_prod : '';
@@ -209,7 +213,7 @@ function product_insert_woocommerce() {
 
                     // If specific image condition is not met, set a random image as thumbnail
                     if ( !$specific_image_attached ) {
-                        
+
                         $gallery_ids = get_post_meta( $product_id, '_product_image_gallery', true );
                         $gallery_ids = explode( ',', $gallery_ids );
 

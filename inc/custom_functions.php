@@ -79,3 +79,25 @@ function display_custom_tab_content() {
 }
 
 add_filter( 'woocommerce_product_tabs', 'add_custom_tab' );
+
+
+// modify product tile
+function remove_product_code_from_title($title, $id = 0) {
+    // Check if we are on a single product page
+    if (is_product()) {
+        // Get the product object
+        $product = wc_get_product($id);
+
+        // Check if the product object exists and has a SKU (product code)
+        if ($product && $product->get_sku()) {
+            // Remove the product code from the title
+            $title = str_replace($product->get_sku(), '', $title);
+        }
+    }
+
+    return $title;
+}
+
+// Hook the function to the 'woocommerce_product_title' filter
+add_filter('woocommerce_product_title', 'remove_product_code_from_title', 10, 2);
+
