@@ -2,6 +2,7 @@
 
 // Add a filter hook to modify the cart item thumbnail
 function custom_cart_item_thumbnail( $product_thumbnail, $cart_item, $cart_item_key ) {
+    
     // Get the product ID from the cart item
     $product_id = $cart_item['product_id'];
 
