@@ -235,10 +235,12 @@ function product_insert_woocommerce() {
             // Set product categories
             wp_set_object_terms( $product_id, $category, 'product_cat' );
 
-            // Set product gallery images and thumbnail image
+            // Set product image gallery and thumbnail
             foreach ( $images_arr as $image_url ) {
+
                 // Extract image name
                 $image_name = basename( $image_url );
+
                 // Get WordPress upload directory
                 $upload_dir = wp_upload_dir();
 
@@ -273,28 +275,25 @@ function product_insert_woocommerce() {
                     update_post_meta( $product_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
 
                     // Check if this image should be set as the product thumbnail
-                    if ( strpos( $image_url, 'CAPPOTTI-1' ) !== false ) {
+                    $thumbnail_conditions = array(
+                        'CAPPOTTI-1',
+                        'CAPPOTTI-2',
+                        'GIACCHE-1',
+                        'INTIMO-1',
+                        'T-SHIRT-1',
+                        'INTIMO-1',
+                    );
 
-                        set_post_thumbnail( $product_id, $attach_id );
-                        $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
+                    foreach ( $thumbnail_conditions as $condition ) {
+                        if ( strpos( $image_url, $condition ) !== false ) {
+                            set_post_thumbnail( $product_id, $attach_id );
+                            $specific_image_attached = true; // Flag the attachment of a specific image as the product thumbnail
+                            break; // Exit the loop once a condition is met
+                        }
+                    }
 
-                    } else if ( strpos( $image_url, 'CAPPOTTI-2' ) !== false ) {
-
-                        set_post_thumbnail( $product_id, $attach_id );
-                        $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
-
-                    } else if ( strpos( $image_url, 'INTIMO-1' ) !== false ) {
-
-                        set_post_thumbnail( $product_id, $attach_id );
-                        $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
-
-                    } else if ( strpos( $image_url, 'T-SHIRT-1' ) !== false ) {
-
-                        set_post_thumbnail( $product_id, $attach_id );
-                        $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
-
-                    } else {
-
+                    // If no specific image condition is met, set a random image from the gallery as the thumbnail
+                    if ( !$specific_image_attached ) {
                         $gallery_ids = get_post_meta( $product_id, '_product_image_gallery', true );
                         $gallery_ids = explode( ',', $gallery_ids );
 
@@ -307,9 +306,9 @@ function product_insert_woocommerce() {
                             set_post_thumbnail( $product_id, $random_attach_id );
                         }
                     }
-
                 }
             }
+
 
             // Update the status of the processed product in your database
             $wpdb->update(
