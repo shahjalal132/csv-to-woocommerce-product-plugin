@@ -45,10 +45,13 @@ function product_insert_woocommerce() {
         $promo       = isset( $product->promo ) ? $product->promo : '';
         $price       = isset( $product->price ) ? $product->price : '';
         $price_promo = isset( $product->price_promo ) ? $product->price_promo : '';
-        $size        = isset( $product->size ) ? $product->size : '';
-        $quantity    = isset( $product->quantity ) ? $product->quantity : '';
-        $mag         = isset( $product->mag ) ? $product->mag : '';
-        $warehouse   = isset( $product->warehouse ) ? $product->warehouse : '';
+
+        $size = isset( $product->size ) ? $product->size : '';
+        // $size = '30|32|36|38';
+
+        $quantity  = isset( $product->quantity ) ? $product->quantity : '';
+        $mag       = isset( $product->mag ) ? $product->mag : '';
+        $warehouse = isset( $product->warehouse ) ? $product->warehouse : '';
 
         // Extract images
         $img_1 = isset( $product->img_1 ) ? $product->img_1 : '';
@@ -128,6 +131,8 @@ function product_insert_woocommerce() {
             // Update product
             $client->put( 'products/' . $product_id, $product_data );
 
+            add_post_meta( $product_id, '_size', $size );
+
             // Add variations
             foreach ( explode( '|', $color ) as $color_option ) {
                 foreach ( explode( '|', $size ) as $size_option ) {
@@ -190,7 +195,7 @@ function product_insert_woocommerce() {
             // set products additional information
             update_post_meta( $product_id, '_color', $color );
             update_post_meta( $product_id, '_season', $season );
-            update_post_meta( $product_id, '_size', $size );
+            add_post_meta( $product_id, '_size', $size );
             update_post_meta( $product_id, '_mag', $mag );
             update_post_meta( $product_id, '_desc_mod_id', $desc_mod_id );
             update_post_meta( $product_id, '_promo', $promo );
