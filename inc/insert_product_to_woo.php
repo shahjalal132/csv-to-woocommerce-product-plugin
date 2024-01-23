@@ -34,18 +34,21 @@ function product_insert_woocommerce() {
 
         $variant_code = isset( $product->variant_code ) ? $product->variant_code : '';
         $color        = isset( $product->color ) ? $product->color : '';
-        $desc_prod    = isset( $product->desc_prod ) ? $product->desc_prod : '';
-        $category     = isset( $product->category ) ? $product->category : '';
-        $desc_fam_en  = isset( $product->desc_fam_en ) ? $product->desc_fam_en : '';
-        $desc_mod_id  = isset( $product->desc_mod_id ) ? $product->desc_mod_id : '';
-        $season       = isset( $product->season ) ? $product->season : '';
-        $promo        = isset( $product->promo ) ? $product->promo : '';
-        $price        = isset( $product->price ) ? $product->price : '';
-        $price_promo  = isset( $product->price_promo ) ? $product->price_promo : '';
-        $size         = isset( $product->size ) ? $product->size : '';
-        $quantity     = isset( $product->quantity ) ? $product->quantity : '';
-        $mag          = isset( $product->mag ) ? $product->mag : '';
-        $warehouse    = isset( $product->warehouse ) ? $product->warehouse : '';
+
+        $desc_prod  = isset( $product->desc_prod ) ? $product->desc_prod : '';
+        $brand_name = $desc_prod;
+
+        $category    = isset( $product->category ) ? $product->category : '';
+        $desc_fam_en = isset( $product->desc_fam_en ) ? $product->desc_fam_en : '';
+        $desc_mod_id = isset( $product->desc_mod_id ) ? $product->desc_mod_id : '';
+        $season      = isset( $product->season ) ? $product->season : '';
+        $promo       = isset( $product->promo ) ? $product->promo : '';
+        $price       = isset( $product->price ) ? $product->price : '';
+        $price_promo = isset( $product->price_promo ) ? $product->price_promo : '';
+        $size        = isset( $product->size ) ? $product->size : '';
+        $quantity    = isset( $product->quantity ) ? $product->quantity : '';
+        $mag         = isset( $product->mag ) ? $product->mag : '';
+        $warehouse   = isset( $product->warehouse ) ? $product->warehouse : '';
 
         // Extract images
         $img_1 = isset( $product->img_1 ) ? $product->img_1 : '';
@@ -192,6 +195,12 @@ function product_insert_woocommerce() {
             update_post_meta( $product_id, '_desc_mod_id', $desc_mod_id );
             update_post_meta( $product_id, '_promo', $promo );
 
+            // Set Brand name to products
+            wp_set_object_terms( $product_id, $brand_name, 'brand' );
+
+            // Update the custom field
+            update_post_meta( $product_id, '_brand', $brand_name );
+
             // Update product meta data in WordPress
             update_post_meta( $product_id, '_stock', $quantity );
 
@@ -268,10 +277,30 @@ function product_insert_woocommerce() {
 
                     // Check if this image should be set as the product thumbnail
                     if ( strpos( $image_url, 'CAPPOTTI-1' ) !== false ) {
+
                         set_post_thumbnail( $product_id, $attach_id );
                         $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
+
+                    } else if ( strpos( $image_url, 'CAPPOTTI-2' ) !== false ) {
+
+                        set_post_thumbnail( $product_id, $attach_id );
+                        $specific_image_attached = true; // Flag the attachment of specific image as product thumbnail
+
+                    } else {
+
+                        $gallery_ids = get_post_meta( $product_id, '_product_image_gallery', true );
+                        $gallery_ids = explode( ',', $gallery_ids );
+
+                        // Check if there are images in the gallery
+                        if ( !empty( $gallery_ids ) ) {
+                            // Select a random image from the gallery
+                            $random_attach_id = $gallery_ids[array_rand( $gallery_ids )];
+
+                            // Set the randomly selected image as the product thumbnail
+                            set_post_thumbnail( $product_id, $random_attach_id );
+                        }
                     }
-                    
+
                 }
             }
 
