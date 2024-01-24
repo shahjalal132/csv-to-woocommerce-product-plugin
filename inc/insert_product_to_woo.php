@@ -295,9 +295,14 @@ function product_insert_woocommerce() {
                         'CAPPOTTI-1',
                         'CAPPOTTI-2',
                         'GIACCHE-1',
+                        'GIACCHE-1',
+                        'GIACCHE-1',
+                        'INTIMO-1',
+                        'INTIMO-1',
                         'INTIMO-1',
                         'T-SHIRT-1',
-                        'INTIMO-1',
+						'MAGLIERIA-1',
+						'PANTALONI-1',
                     );
 
                     foreach ( $thumbnail_conditions as $condition ) {
