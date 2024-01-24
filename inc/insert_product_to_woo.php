@@ -293,7 +293,6 @@ function product_insert_woocommerce() {
                         'CAPPOTTI-1',
                         'CAPPOTTI-1',
                         'CAPPOTTI-1',
-                        'CAPPOTTI-2',
                         'GIACCHE-1',
                         'GIACCHE-1',
                         'GIACCHE-1',
@@ -312,10 +311,13 @@ function product_insert_woocommerce() {
                         'STIVALI-1',
                         'STIVALI-1',
                         'STIVALI-1',
+                        'CAMICIE-1',
+                        'CAMICIE-1',
+                        'CAMICIE-1',
                     );
 
                     foreach ( $thumbnail_conditions as $condition ) {
-                        if ( strpos( $image_url, $condition ) !== false  && substr( $image_url, -6, 2 ) == '-1'  ) {
+                        if ( strpos( $image_url, $condition ) !== false ) {
                             set_post_thumbnail( $product_id, $attach_id );
                             $specific_image_attached = true; // Flag the attachment of a specific image as the product thumbnail
                             break; // Exit the loop once a condition is met
