@@ -291,6 +291,8 @@ function product_insert_woocommerce() {
                     // Check if this image should be set as the product thumbnail
                     $thumbnail_conditions = array(
                         'CAPPOTTI-1',
+                        'CAPPOTTI-1',
+                        'CAPPOTTI-1',
                         'CAPPOTTI-2',
                         'GIACCHE-1',
                         'INTIMO-1',
