@@ -301,12 +301,21 @@ function product_insert_woocommerce() {
                         'INTIMO-1',
                         'INTIMO-1',
                         'T-SHIRT-1',
-						'MAGLIERIA-1',
-						'PANTALONI-1',
+                        'T-SHIRT-1',
+                        'T-SHIRT-1',
+                        'MAGLIERIA-1',
+                        'MAGLIERIA-1',
+                        'MAGLIERIA-1',
+                        'PANTALONI-1',
+                        'PANTALONI-1',
+                        'PANTALONI-1',
+                        'STIVALI-1',
+                        'STIVALI-1',
+                        'STIVALI-1',
                     );
 
                     foreach ( $thumbnail_conditions as $condition ) {
-                        if ( strpos( $image_url, $condition ) !== false ) {
+                        if ( strpos( $image_url, $condition ) !== false  && substr( $image_url, -6, 2 ) == '-1'  ) {
                             set_post_thumbnail( $product_id, $attach_id );
                             $specific_image_attached = true; // Flag the attachment of a specific image as the product thumbnail
                             break; // Exit the loop once a condition is met
