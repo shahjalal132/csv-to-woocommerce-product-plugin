@@ -256,8 +256,6 @@ function product_insert_woocommerce() {
             // Set product image gallery and thumbnail
             foreach ( $images_arr as $image_url ) {
 
-                var_dump( $image_url );
-
                 // Extract image name
                 $image_name = basename( $image_url );
 
@@ -293,7 +291,7 @@ function product_insert_woocommerce() {
 
                     // Check if the image URL ends with '-1' to set it as the product thumbnail
                     if ( substr( $image_url, -6, 2 ) == '-1' ) {
-                        
+
                         // set post-thumbnail to product
                         set_post_thumbnail( $product_id, $attach_id );
                         
