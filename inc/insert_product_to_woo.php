@@ -98,8 +98,15 @@ function product_insert_woocommerce() {
             // get sizes from _size meta key
             $sizes = get_post_meta( $product_id, '_size', false );
 
-            // convert sizes array to string with | separator
-            $sizes_string = implode( '|', $sizes );
+            // add new sizes to _size meta key
+            $new_sizes     = explode( '|', $size );
+            $updated_sizes = array_merge( $sizes, $new_sizes );
+
+            // convert updated sizes array to string with | separator
+            $updated_sizes = implode( '|', $updated_sizes );
+
+            // update the _size meta key with all sizes
+            update_post_meta( $product_id, '_size', $updated_sizes );
 
             // Update the status of the processed product in your database
             $wpdb->update(
@@ -125,7 +132,7 @@ function product_insert_woocommerce() {
                     ],
                     [
                         'name'        => 'Size',
-                        'options'     => explode( separator: '|', string: $sizes_string ),
+                        'options'     => explode( separator: '|', string: $updated_sizes ),
                         'position'    => 1,
                         'visible'     => true,
                         'variation'   => true,
@@ -137,12 +144,9 @@ function product_insert_woocommerce() {
             // Update product
             $client->put( 'products/' . $product_id, $product_data );
 
-            // add new sizes to _size meta key
-            add_post_meta( $product_id, '_size', $size );
-
             // Add variations
             foreach ( explode( '|', $color ) as $color_option ) {
-                foreach ( explode( '|', $sizes_string ) as $size_option ) {
+                foreach ( explode( '|', $updated_sizes ) as $size_option ) {
 
                     // Add variation data
                     $variation_data = [
