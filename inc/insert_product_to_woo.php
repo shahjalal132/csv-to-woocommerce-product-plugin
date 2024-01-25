@@ -256,6 +256,8 @@ function product_insert_woocommerce() {
             // Set product image gallery and thumbnail
             foreach ( $images_arr as $image_url ) {
 
+                var_dump( $image_url );
+
                 // Extract image name
                 $image_name = basename( $image_url );
 
@@ -264,9 +266,6 @@ function product_insert_woocommerce() {
 
                 // Download the image from URL and save it to the upload directory
                 $image_data = file_get_contents( $image_url );
-
-                // Set specific image as product thumbnail
-                $specific_image_attached = false; // Flag to track the attachment of the specific image
 
                 if ( $image_data !== false ) {
                     $image_file = $upload_dir['path'] . '/' . $image_name;
@@ -292,58 +291,24 @@ function product_insert_woocommerce() {
                     $gallery_ids[] = $attach_id;
                     update_post_meta( $product_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
 
-                    // Check if this image should be set as the product thumbnail
-                    $thumbnail_conditions = array(
-                        'CAPPOTTI-1',
-                        'CAPPOTTI-1',
-                        'CAPPOTTI-1',
-                        'GIACCHE-1',
-                        'GIACCHE-1',
-                        'GIACCHE-1',
-                        'INTIMO-1',
-                        'INTIMO-1',
-                        'INTIMO-1',
-                        'T-SHIRT-1',
-                        'T-SHIRT-1',
-                        'T-SHIRT-1',
-                        'MAGLIERIA-1',
-                        'MAGLIERIA-1',
-                        'MAGLIERIA-1',
-                        'PANTALONI-1',
-                        'PANTALONI-1',
-                        'PANTALONI-1',
-                        'STIVALI-1',
-                        'STIVALI-1',
-                        'STIVALI-1',
-                        'CAMICIE-1',
-                        'CAMICIE-1',
-                        'CAMICIE-1',
-                    );
-
-                    foreach ( $thumbnail_conditions as $condition ) {
-                        if ( strpos( $image_url, $condition ) !== false ) {
-                            set_post_thumbnail( $product_id, $attach_id );
-                            $specific_image_attached = true; // Flag the attachment of a specific image as the product thumbnail
-                            break; // Exit the loop once a condition is met
-                        }
+                    // Check if the image URL ends with '-1' to set it as the product thumbnail
+                    if ( substr( $image_url, -6, 2 ) == '-1' ) {
+                        set_post_thumbnail( $product_id, $attach_id );
+                        // Break the loop after setting the featured image
+                        break;
                     }
 
-                    // If no specific image condition is met, set a random image from the gallery as the thumbnail
-                    if ( !$specific_image_attached ) {
-                        $gallery_ids = get_post_meta( $product_id, '_product_image_gallery', true );
-                        $gallery_ids = explode( ',', $gallery_ids );
-
-                        // Check if there are images in the gallery
+                    // if not set post-thumbnail then set a random thumbnail from gallery
+                    if ( !has_post_thumbnail( $product_id ) ) {
                         if ( !empty( $gallery_ids ) ) {
-                            // Select a random image from the gallery
                             $random_attach_id = $gallery_ids[array_rand( $gallery_ids )];
-
-                            // Set the randomly selected image as the product thumbnail
                             set_post_thumbnail( $product_id, $random_attach_id );
                         }
                     }
+
                 }
             }
+
 
 
             // Update the status of the processed product in your database
