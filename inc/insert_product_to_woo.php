@@ -293,9 +293,12 @@ function product_insert_woocommerce() {
 
                     // Check if the image URL ends with '-1' to set it as the product thumbnail
                     if ( substr( $image_url, -6, 2 ) == '-1' ) {
+                        
+                        // set post-thumbnail to product
                         set_post_thumbnail( $product_id, $attach_id );
-                        // Break the loop after setting the featured image
-                        break;
+                        
+                        // continue next image to set gallery
+                        continue;
                     }
 
                     // if not set post-thumbnail then set a random thumbnail from gallery
